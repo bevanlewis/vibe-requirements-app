@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.26.9",
+    "@babel/preset-react": "^7.26.3",
     "@babel/preset-typescript": "^7.27.0",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
@@ -29,6 +30,7 @@
     "@types/node-fetch": "^2.6.12",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "babel-jest": "^29.7.0",
     "dotenv": "^16.4.7",
     "eslint": "^9",
     "eslint-config-next": "15.2.4",

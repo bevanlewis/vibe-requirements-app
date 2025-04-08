@@ -37,12 +37,12 @@ describe("Functional Tests", () => {
 
     // Enter prompt
     const textarea = screen.getByPlaceholderText(
-      /enter your project requirements/i
+      /what do you want to build\?/i
     );
     fireEvent.change(textarea, { target: { value: "Test prompt" } });
 
     // Click generate button
-    const generateButton = screen.getByText(/generate/i);
+    const generateButton = screen.getByText(/^generate$/i);
     fireEvent.click(generateButton);
 
     // Verify loading state
@@ -69,10 +69,10 @@ describe("Functional Tests", () => {
 
     // Generate content first
     const textarea = screen.getByPlaceholderText(
-      /enter your project requirements/i
+      /what do you want to build\?/i
     );
     fireEvent.change(textarea, { target: { value: "Test prompt" } });
-    fireEvent.click(screen.getByText(/generate/i));
+    fireEvent.click(screen.getByText(/^generate$/i));
 
     await waitFor(() => {
       expect(screen.getByText("# PRD Content")).toBeInTheDocument();
@@ -103,10 +103,10 @@ describe("Functional Tests", () => {
 
     // Generate content first
     const textarea = screen.getByPlaceholderText(
-      /enter your project requirements/i
+      /what do you want to build\?/i
     );
     fireEvent.change(textarea, { target: { value: "Test prompt" } });
-    fireEvent.click(screen.getByText(/generate/i));
+    fireEvent.click(screen.getByText(/^generate$/i));
 
     await waitFor(() => {
       expect(screen.getByText("# PRD Content")).toBeInTheDocument();
@@ -135,14 +135,66 @@ describe("Functional Tests", () => {
 
     // Try to generate
     const textarea = screen.getByPlaceholderText(
-      /enter your project requirements/i
+      /what do you want to build\?/i
     );
     fireEvent.change(textarea, { target: { value: "Test prompt" } });
-    fireEvent.click(screen.getByText(/generate/i));
+    fireEvent.click(screen.getByText(/^generate$/i));
 
     // Verify error message
     await waitFor(() => {
       expect(screen.getByText(/test error message/i)).toBeInTheDocument();
     });
+  });
+
+  it("should handle edit mode", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          prd: "# PRD Content",
+          todo: "# Todo Content",
+        }),
+    });
+
+    render(<Home />);
+
+    // Generate content first
+    const textarea = screen.getByPlaceholderText(
+      /what do you want to build\?/i
+    );
+    fireEvent.change(textarea, { target: { value: "Test prompt" } });
+    fireEvent.click(screen.getByText(/^generate$/i));
+
+    await waitFor(() => {
+      expect(screen.getByText("# PRD Content")).toBeInTheDocument();
+    });
+
+    // Find and click edit buttons
+    const editButtons = screen.getAllByText(/edit/i);
+    fireEvent.click(editButtons[0]); // Edit PRD
+
+    // Verify edit mode is active
+    const editableTextarea = screen.getByDisplayValue("# PRD Content");
+    expect(editableTextarea).toBeInTheDocument();
+
+    // Edit content
+    fireEvent.change(editableTextarea, {
+      target: { value: "# Updated PRD Content" },
+    });
+
+    // Click Done
+    const doneButton = screen.getByText(/done/i);
+    fireEvent.click(doneButton);
+
+    // Verify content was updated
+    expect(screen.getByText("# Updated PRD Content")).toBeInTheDocument();
+  });
+
+  it("should not show output panels initially", () => {
+    render(<Home />);
+
+    // Check that output panels are not visible initially
+    expect(screen.queryByText("PRD Document")).not.toBeInTheDocument();
+    expect(screen.queryByText("Todo List")).not.toBeInTheDocument();
   });
 });
