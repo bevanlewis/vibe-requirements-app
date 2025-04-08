@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Header from "./components/Header";
 import InputSection from "./components/InputSection";
 import OutputPanel from "./components/OutputPanel";
-import LoadingSpinner from "./components/LoadingSpinner";
 import ErrorDisplay from "./components/ErrorDisplay";
 
 export default function Home() {
@@ -13,14 +12,13 @@ export default function Home() {
   const [todoContent, setTodoContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [hasGenerated, setHasGenerated] = useState(false);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
 
     setIsLoading(true);
     setError("");
-    setPrdContent("");
-    setTodoContent("");
 
     try {
       const response = await fetch("/api/generate", {
@@ -39,6 +37,7 @@ export default function Home() {
       const data = await response.json();
       setPrdContent(data.prd);
       setTodoContent(data.todo);
+      setHasGenerated(true);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "An unexpected error occurred"
@@ -48,8 +47,16 @@ export default function Home() {
     }
   };
 
+  const handlePrdChange = (newContent: string) => {
+    setPrdContent(newContent);
+  };
+
+  const handleTodoChange = (newContent: string) => {
+    setTodoContent(newContent);
+  };
+
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen">
       <Header />
 
       <div className="container mx-auto py-8">
@@ -60,21 +67,26 @@ export default function Home() {
           isLoading={isLoading}
         />
 
-        <div className="grid md:grid-cols-2 gap-6 mt-8 px-4">
-          <OutputPanel
-            title="PRD Document"
-            content={prdContent}
-            fileName="requirements"
-          />
-          <OutputPanel
-            title="Todo List"
-            content={todoContent}
-            fileName="todo"
-          />
-        </div>
+        {hasGenerated && (
+          <div className="grid md:grid-cols-2 gap-6 mt-8 px-4">
+            <OutputPanel
+              title="PRD Document"
+              content={prdContent}
+              fileName="requirements"
+              onContentChange={handlePrdChange}
+              isEditable={true}
+            />
+            <OutputPanel
+              title="Todo List"
+              content={todoContent}
+              fileName="todo"
+              onContentChange={handleTodoChange}
+              isEditable={true}
+            />
+          </div>
+        )}
       </div>
 
-      {isLoading && <LoadingSpinner />}
       {error && <ErrorDisplay message={error} onDismiss={() => setError("")} />}
     </main>
   );

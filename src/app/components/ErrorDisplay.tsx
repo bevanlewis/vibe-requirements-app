@@ -9,7 +9,7 @@ const ErrorDisplay = ({ message, onDismiss }: ErrorDisplayProps) => {
   if (!message) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 bg-red-50 border-l-4 border-red-500 p-4 rounded shadow-lg">
+    <div className="fixed bottom-4 right-4 bg-red-950/50 border-l-4 border-red-500 p-4 rounded shadow-lg backdrop-blur-sm">
       <div className="flex">
         <div className="flex-shrink-0">
           <svg
@@ -25,13 +25,13 @@ const ErrorDisplay = ({ message, onDismiss }: ErrorDisplayProps) => {
           </svg>
         </div>
         <div className="ml-3">
-          <p className="text-sm text-red-700">{message}</p>
+          <p className="text-sm text-red-200">{message}</p>
         </div>
         <div className="ml-auto pl-3">
           <div className="-mx-1.5 -my-1.5">
             <button
               onClick={onDismiss}
-              className="inline-flex rounded-md p-1.5 text-red-500 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              className="inline-flex rounded-md p-1.5 text-red-400 hover:bg-red-900/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
             >
               <span className="sr-only">Dismiss</span>
               <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
