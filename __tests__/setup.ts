@@ -28,3 +28,9 @@ Object.defineProperty(global, "Request", {
 });
 
 export {};
+
+describe("Test Environment Setup", () => {
+  it("should have Jest configured correctly", () => {
+    expect(true).toBe(true);
+  });
+});

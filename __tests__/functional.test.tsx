@@ -1,6 +1,12 @@
 import React from "react";
 import "@testing-library/jest-dom";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import Home from "@/app/page";
 
 // Mock the fetch function
@@ -10,7 +16,7 @@ global.fetch = mockFetch;
 // Mock clipboard API
 Object.assign(navigator, {
   clipboard: {
-    writeText: jest.fn(),
+    writeText: jest.fn().mockResolvedValue(undefined),
   },
 });
 
@@ -21,6 +27,11 @@ global.URL.revokeObjectURL = jest.fn();
 describe("Functional Tests", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   it("should handle successful generation flow", async () => {
@@ -40,14 +51,20 @@ describe("Functional Tests", () => {
     const textarea = screen.getByPlaceholderText(
       /what do you want to build\?/i
     );
-    fireEvent.change(textarea, { target: { value: "Test prompt" } });
+    await act(async () => {
+      fireEvent.change(textarea, { target: { value: "Test prompt" } });
+    });
 
     // Click generate button
     const generateButton = screen.getByText(/^generate$/i);
-    fireEvent.click(generateButton);
+    await act(async () => {
+      fireEvent.click(generateButton);
+    });
 
     // Verify loading state
-    expect(screen.getByText(/generating/i)).toBeInTheDocument();
+    const button = screen.getByRole("button", { name: /generating/i });
+    expect(button).toBeInTheDocument();
+    expect(button).toHaveAttribute("aria-busy", "true");
 
     // Wait for results
     await waitFor(() => {
@@ -72,8 +89,10 @@ describe("Functional Tests", () => {
     const textarea = screen.getByPlaceholderText(
       /what do you want to build\?/i
     );
-    fireEvent.change(textarea, { target: { value: "Test prompt" } });
-    fireEvent.click(screen.getByText(/^generate$/i));
+    await act(async () => {
+      fireEvent.change(textarea, { target: { value: "Test prompt" } });
+      fireEvent.click(screen.getByText(/^generate$/i));
+    });
 
     await waitFor(() => {
       expect(screen.getByText("# PRD Content")).toBeInTheDocument();
@@ -81,13 +100,22 @@ describe("Functional Tests", () => {
 
     // Test copy buttons
     const copyButtons = screen.getAllByText(/copy/i);
-    fireEvent.click(copyButtons[0]); // Copy PRD
-    fireEvent.click(copyButtons[1]); // Copy Todo
+    await act(async () => {
+      fireEvent.click(copyButtons[0]); // Copy PRD
+      await Promise.resolve(); // Wait for state update
+      fireEvent.click(copyButtons[1]); // Copy Todo
+      await Promise.resolve(); // Wait for state update
+    });
 
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith("# PRD Content");
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       "# Todo Content"
     );
+
+    // Fast-forward timers to clear copy success state
+    act(() => {
+      jest.runAllTimers();
+    });
   });
 
   it("should handle download functionality", async () => {
@@ -106,8 +134,10 @@ describe("Functional Tests", () => {
     const textarea = screen.getByPlaceholderText(
       /what do you want to build\?/i
     );
-    fireEvent.change(textarea, { target: { value: "Test prompt" } });
-    fireEvent.click(screen.getByText(/^generate$/i));
+    await act(async () => {
+      fireEvent.change(textarea, { target: { value: "Test prompt" } });
+      fireEvent.click(screen.getByText(/^generate$/i));
+    });
 
     await waitFor(() => {
       expect(screen.getByText("# PRD Content")).toBeInTheDocument();
@@ -115,8 +145,10 @@ describe("Functional Tests", () => {
 
     // Test download buttons
     const downloadButtons = screen.getAllByText(/download/i);
-    fireEvent.click(downloadButtons[0]); // Download PRD
-    fireEvent.click(downloadButtons[1]); // Download Todo
+    await act(async () => {
+      fireEvent.click(downloadButtons[0]); // Download PRD
+      fireEvent.click(downloadButtons[1]); // Download Todo
+    });
 
     expect(URL.createObjectURL).toHaveBeenCalledTimes(2);
     expect(URL.revokeObjectURL).toHaveBeenCalledTimes(2);
@@ -138,8 +170,10 @@ describe("Functional Tests", () => {
     const textarea = screen.getByPlaceholderText(
       /what do you want to build\?/i
     );
-    fireEvent.change(textarea, { target: { value: "Test prompt" } });
-    fireEvent.click(screen.getByText(/^generate$/i));
+    await act(async () => {
+      fireEvent.change(textarea, { target: { value: "Test prompt" } });
+      fireEvent.click(screen.getByText(/^generate$/i));
+    });
 
     // Verify error message
     await waitFor(() => {
@@ -163,8 +197,10 @@ describe("Functional Tests", () => {
     const textarea = screen.getByPlaceholderText(
       /what do you want to build\?/i
     );
-    fireEvent.change(textarea, { target: { value: "Test prompt" } });
-    fireEvent.click(screen.getByText(/^generate$/i));
+    await act(async () => {
+      fireEvent.change(textarea, { target: { value: "Test prompt" } });
+      fireEvent.click(screen.getByText(/^generate$/i));
+    });
 
     await waitFor(() => {
       expect(screen.getByText("# PRD Content")).toBeInTheDocument();
@@ -172,20 +208,26 @@ describe("Functional Tests", () => {
 
     // Find and click edit buttons
     const editButtons = screen.getAllByText(/edit/i);
-    fireEvent.click(editButtons[0]); // Edit PRD
+    await act(async () => {
+      fireEvent.click(editButtons[0]); // Edit PRD
+    });
 
     // Verify edit mode is active
     const editableTextarea = screen.getByDisplayValue("# PRD Content");
     expect(editableTextarea).toBeInTheDocument();
 
     // Edit content
-    fireEvent.change(editableTextarea, {
-      target: { value: "# Updated PRD Content" },
+    await act(async () => {
+      fireEvent.change(editableTextarea, {
+        target: { value: "# Updated PRD Content" },
+      });
     });
 
     // Click Done
     const doneButton = screen.getByText(/done/i);
-    fireEvent.click(doneButton);
+    await act(async () => {
+      fireEvent.click(doneButton);
+    });
 
     // Verify content was updated
     expect(screen.getByText("# Updated PRD Content")).toBeInTheDocument();
