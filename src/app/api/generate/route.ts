@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { GroqClient } from "@/lib/groq/client";
+import {
+  constructSystemPrompt,
+  constructUserPrompt,
+  parseResponse,
+} from "@/lib/groq/prompt";
 
 // Input validation schema
 const GenerateRequestSchema = z.object({
@@ -19,13 +25,21 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { prompt } = GenerateRequestSchema.parse(body);
 
-    // TODO: Implement Groq API integration in Task 1.4
-    // For now, return a mock response with the validated prompt
-    return NextResponse.json({
-      prompt, // Include the validated prompt in response for testing
-      prd: "# Mock PRD\n\nThis is a placeholder PRD.",
-      todo: "# Mock Todo\n\n- [ ] First task\n- [ ] Second task",
+    // Initialize the Groq client
+    const client = new GroqClient();
+
+    // Generate text using constructed prompts
+    const response = await client.generateText(constructUserPrompt(prompt), {
+      systemPrompt: constructSystemPrompt(),
+      temperature: 0.7, // Balanced between creativity and consistency
+      maxTokens: 4000, // Allow for detailed PRD and Todo list
     });
+
+    // Parse the response into PRD and Todo sections
+    const { prd, todo } = parseResponse(response);
+
+    // Return the parsed response
+    return NextResponse.json({ prd, todo });
   } catch (error) {
     console.error("Error in generate endpoint:", error);
 
@@ -34,6 +48,17 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "Invalid request data", details: error.errors },
         { status: 400 }
+      );
+    }
+
+    // Handle parsing errors specifically
+    if (
+      error instanceof Error &&
+      error.message.includes("Failed to parse response")
+    ) {
+      return NextResponse.json(
+        { error: "Failed to parse AI response", details: error.message },
+        { status: 500 }
       );
     }
 
