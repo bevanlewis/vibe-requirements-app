@@ -49,7 +49,7 @@ describe("Functional Tests", () => {
 
     // Enter prompt
     const textarea = screen.getByPlaceholderText(
-      /what do you want to build\?/i
+      /describe your idea or project here/i
     );
     await act(async () => {
       fireEvent.change(textarea, { target: { value: "Test prompt" } });
@@ -62,9 +62,10 @@ describe("Functional Tests", () => {
     });
 
     // Verify loading state
-    const button = screen.getByRole("button", { name: /generating/i });
-    expect(button).toBeInTheDocument();
-    expect(button).toHaveAttribute("aria-busy", "true");
+    await waitFor(() => {
+      const button = screen.getByRole("button", { busy: true });
+      expect(button).toHaveTextContent(/Generating\.\.\./i);
+    });
 
     // Wait for results
     await waitFor(() => {
@@ -87,7 +88,7 @@ describe("Functional Tests", () => {
 
     // Generate content first
     const textarea = screen.getByPlaceholderText(
-      /what do you want to build\?/i
+      /describe your idea or project here/i
     );
     await act(async () => {
       fireEvent.change(textarea, { target: { value: "Test prompt" } });
@@ -132,7 +133,7 @@ describe("Functional Tests", () => {
 
     // Generate content first
     const textarea = screen.getByPlaceholderText(
-      /what do you want to build\?/i
+      /describe your idea or project here/i
     );
     await act(async () => {
       fireEvent.change(textarea, { target: { value: "Test prompt" } });
@@ -168,7 +169,7 @@ describe("Functional Tests", () => {
 
     // Try to generate
     const textarea = screen.getByPlaceholderText(
-      /what do you want to build\?/i
+      /describe your idea or project here/i
     );
     await act(async () => {
       fireEvent.change(textarea, { target: { value: "Test prompt" } });
@@ -195,7 +196,7 @@ describe("Functional Tests", () => {
 
     // Generate content first
     const textarea = screen.getByPlaceholderText(
-      /what do you want to build\?/i
+      /describe your idea or project here/i
     );
     await act(async () => {
       fireEvent.change(textarea, { target: { value: "Test prompt" } });

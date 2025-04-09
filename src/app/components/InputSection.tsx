@@ -14,8 +14,8 @@ const InputSection = React.memo(
       <div className="w-full max-w-4xl mx-auto px-2 sm:px-4">
         <div className="bg-secondary rounded-lg shadow-sm p-3 sm:p-4">
           <textarea
-            className="w-full h-32 sm:h-48 p-3 sm:p-4 bg-input border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent resize-none placeholder-secondary-foreground/50"
-            placeholder="What do you want to build?"
+            className="w-full h-24 p-3 sm:p-4 bg-input border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent resize-none placeholder-secondary-foreground/50"
+            placeholder="Describe your idea or project here"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             aria-label="Project description"
