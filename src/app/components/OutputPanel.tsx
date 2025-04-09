@@ -58,21 +58,21 @@ const OutputPanel = React.memo(
 
     return (
       <div
-        className={`bg-secondary rounded-lg shadow-sm p-4 ${
+        className={`bg-secondary rounded-lg shadow-sm p-3 sm:p-4 ${
           isEditMode ? "ring-2 ring-primary" : ""
         }`}
         role="region"
         aria-label={title}
       >
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold" tabIndex={0}>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 space-y-3 sm:space-y-0">
+          <h2 className="text-lg sm:text-xl font-semibold" tabIndex={0}>
             {title}
           </h2>
-          <div className="space-x-2">
+          <div className="flex flex-wrap gap-2">
             {isEditable && (
               <button
                 onClick={toggleEditMode}
-                className={`px-4 py-2 text-sm rounded-lg transition-colors ${
+                className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm rounded-lg transition-colors ${
                   isEditMode
                     ? "bg-primary text-primary-foreground"
                     : "bg-secondary-foreground/10 hover:bg-secondary-foreground/20"
@@ -85,7 +85,7 @@ const OutputPanel = React.memo(
             )}
             <button
               onClick={handleCopy}
-              className="px-4 py-2 text-sm bg-secondary-foreground/10 hover:bg-secondary-foreground/20 rounded-lg transition-colors"
+              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm bg-secondary-foreground/10 hover:bg-secondary-foreground/20 rounded-lg transition-colors"
               disabled={!content}
               aria-label="Copy content"
               aria-disabled={!content}
@@ -94,7 +94,7 @@ const OutputPanel = React.memo(
             </button>
             <button
               onClick={handleDownload}
-              className="px-4 py-2 text-sm bg-secondary-foreground/10 hover:bg-secondary-foreground/20 rounded-lg transition-colors"
+              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-sm bg-secondary-foreground/10 hover:bg-secondary-foreground/20 rounded-lg transition-colors"
               disabled={!content}
               aria-label="Download content"
               aria-disabled={!content}
@@ -104,7 +104,7 @@ const OutputPanel = React.memo(
           </div>
         </div>
         <div
-          className={`bg-input rounded-lg p-4 h-96 overflow-auto border transition-colors ${
+          className={`bg-input rounded-lg p-3 sm:p-4 h-64 sm:h-96 overflow-auto border transition-colors ${
             isEditMode ? "border-primary" : "border-border"
           }`}
         >

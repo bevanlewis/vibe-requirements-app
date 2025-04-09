@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   title: "Vibe Requirements",
   description:
     "A web application for generating Product Requirements Documents and Todo lists",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
 };
 
 export default function RootLayout({

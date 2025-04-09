@@ -64,7 +64,7 @@ export default function Home() {
       <main className="min-h-screen">
         <Header />
 
-        <div className="container mx-auto py-8">
+        <div className="container mx-auto py-4 sm:py-8">
           <InputSection
             value={prompt}
             onChange={setPrompt}
@@ -73,7 +73,7 @@ export default function Home() {
           />
 
           {hasGenerated && (
-            <div className="grid md:grid-cols-2 gap-6 mt-8 px-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-8 px-2 sm:px-4">
               <OutputPanel
                 title="PRD Document"
                 content={content.prd}
