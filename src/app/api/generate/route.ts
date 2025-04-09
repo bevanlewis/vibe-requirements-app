@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     const response = await client.generateText(constructUserPrompt(prompt), {
       systemPrompt: constructSystemPrompt(),
       temperature: 0.7, // Balanced between creativity and consistency
-      maxTokens: 4000, // Allow for detailed PRD and Todo list
+      maxTokens: 6000, // Allow for detailed PRD and Todo list
     });
 
     // Parse the response into PRD and Todo sections

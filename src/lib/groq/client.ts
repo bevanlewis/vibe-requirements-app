@@ -130,7 +130,7 @@ export class GroqClient {
     });
 
     const response = await this.sendRequest({
-      model: "llama3-70b-8192", // Updated to currently available model
+      model: "llama-3.3-70b-versatile", // Updated to currently available model
       messages,
       temperature: options.temperature ?? 0.7,
       max_tokens: options.maxTokens,

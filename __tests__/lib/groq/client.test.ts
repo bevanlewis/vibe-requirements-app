@@ -35,7 +35,7 @@ describe("GroqClient", () => {
     it("should successfully generate text", async () => {
       const mockResponse = {
         id: "test-id",
-        model: "llama2-70b-4096",
+        model: "llama-3.3-70b-versatile",
         created: Date.now(),
         choices: [
           {
@@ -74,7 +74,7 @@ describe("GroqClient", () => {
         (global.fetch as jest.Mock).mock.calls[0][1].body
       );
       expect(requestBody).toEqual({
-        model: "llama3-70b-8192",
+        model: "llama-3.3-70b-versatile",
         messages: [
           {
             role: "user",
@@ -89,7 +89,7 @@ describe("GroqClient", () => {
     it("should include system prompt when provided", async () => {
       const mockResponse = {
         id: "test-id",
-        model: "llama2-70b-4096",
+        model: "llama-3.3-70b-versatile",
         created: Date.now(),
         choices: [
           {
@@ -157,7 +157,7 @@ describe("GroqClient", () => {
     it("should handle empty API responses", async () => {
       const mockResponse = {
         id: "test-id",
-        model: "llama2-70b-4096",
+        model: "llama-3.3-70b-versatile",
         created: Date.now(),
         choices: [],
       };
