@@ -30,9 +30,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen flex flex-col`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
-        <div className="flex-1 h-[calc(100vh-40px)]">{children}</div>
+        <div className="flex-1">{children}</div>
         <Footer />
         <Analytics />
         <SpeedInsights />
